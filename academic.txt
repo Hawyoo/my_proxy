@@ -1,0 +1,14 @@
+DOMAIN-SUFFIX,sciencedirect.com
+DOMAIN-SUFFIX,elsevier.com
+DOMAIN-SUFFIX,nature.com
+DOMAIN-SUFFIX,link.springer.com
+DOMAIN-SUFFIX,wiley.com
+DOMAIN-SUFFIX,ieee.org
+DOMAIN-SUFFIX,ieeexplore.ieee.org
+DOMAIN-SUFFIX,dl.acm.org
+DOMAIN-SUFFIX,acm.org
+DOMAIN-SUFFIX,science.org
+DOMAIN-SUFFIX,sciencemag.org
+DOMAIN-SUFFIX,tandfonline.com
+DOMAIN-SUFFIX,oxfordjournals.org
+DOMAIN-SUFFIX,cambridge.org
