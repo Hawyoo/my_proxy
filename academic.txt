@@ -12,3 +12,4 @@ DOMAIN-SUFFIX,sciencemag.org
 DOMAIN-SUFFIX,tandfonline.com
 DOMAIN-SUFFIX,oxfordjournals.org
 DOMAIN-SUFFIX,cambridge.org
+DOMAIN-SUFFIX,nih.gov
