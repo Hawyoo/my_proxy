@@ -1,5 +1,5 @@
 # 全局扩展脚本
-文件末尾加入以下内容：
+添加学术规则文件中加入以下内容：
 
 ```javascript
 function main(config) {
