@@ -2,7 +2,7 @@
 “全局扩展脚本”中加入以下内容：
 
 ```javascript
-function main(config) {
+function addAcademic(config) {
   const academicProvider = {
     type: "http",
     behavior: "classical",
@@ -24,16 +24,14 @@ function main(config) {
   } else {
     config.rules = [academicRule];
   }
-
-  return config;
 }
 ```
 
-# 添加other规则
+# 添加其他规则
 “全局扩展脚本”中加入以下内容：
 
 ```javascript
-function main(config) {
+function addOther(config) {
   const otherProvider = {
     type: "http",
     behavior: "classical",
@@ -55,7 +53,15 @@ function main(config) {
   } else {
     config.rules = [otherRule];
   }
+}
+```
 
+# 调用
+“全局扩展脚本”的最后根据需要加入以下内容：
+```javascript
+function main(config) {
+  addAcademic(config);
+  addOther(config);
   return config;
 }
 ```
