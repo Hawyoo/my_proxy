@@ -132,11 +132,9 @@ DOMAIN-SUFFIX,mitpressjournals.org
 DOMAIN-SUFFIX,mpg.de
 DOMAIN-SUFFIX,myilibrary.com
 DOMAIN-SUFFIX,nature.com
-DOMAIN-SUFFIX,ncbi.nlm.nih.gov
 DOMAIN-SUFFIX,nejm.org
 DOMAIN-SUFFIX,neurology.org
 DOMAIN-SUFFIX,newisiknowledge.com
-DOMAIN-SUFFIX,nih.gov
 DOMAIN-SUFFIX,oecd-ilibrary.org
 DOMAIN-SUFFIX,oed.com
 DOMAIN-SUFFIX,omscr.com
@@ -170,6 +168,7 @@ DOMAIN-SUFFIX,pnas.org
 DOMAIN-SUFFIX,princeton.edu
 DOMAIN-SUFFIX,proquest.com
 DOMAIN-SUFFIX,psyccareers.com
+DOMAIN-SUFFIX,pubmed.ncbi.nlm.nih.gov
 DOMAIN-SUFFIX,readcube.com
 DOMAIN-SUFFIX,researchgate.net
 DOMAIN-SUFFIX,routledgehandbooks.com
