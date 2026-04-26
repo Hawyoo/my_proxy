@@ -56,6 +56,7 @@ DOMAIN-SUFFIX,cambridgedigital.net
 DOMAIN-SUFFIX,cambridgemaths.org
 DOMAIN-SUFFIX,cambridgeschoolshakespeare.com
 DOMAIN-SUFFIX,cas.org
+DOMAIN-SUFFIX,cdn.ncbi.nlm.nih.gov
 DOMAIN-SUFFIX,cell.com
 DOMAIN-SUFFIX,clarivate.com
 DOMAIN-SUFFIX,cnki.net
