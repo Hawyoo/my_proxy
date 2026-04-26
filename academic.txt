@@ -164,6 +164,7 @@ DOMAIN-SUFFIX,peerj.com
 DOMAIN-SUFFIX,physiology.org
 DOMAIN-SUFFIX,pkulaw.com
 DOMAIN-SUFFIX,plos.org
+DOMAIN-SUFFIX,pmc.ncbi.nlm.nih.gov
 DOMAIN-SUFFIX,pnas.org
 DOMAIN-SUFFIX,princeton.edu
 DOMAIN-SUFFIX,proquest.com
