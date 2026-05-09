@@ -56,7 +56,6 @@ DOMAIN-SUFFIX,cambridgedigital.net
 DOMAIN-SUFFIX,cambridgemaths.org
 DOMAIN-SUFFIX,cambridgeschoolshakespeare.com
 DOMAIN-SUFFIX,cas.org
-DOMAIN-SUFFIX,cdn.ncbi.nlm.nih.gov
 DOMAIN-SUFFIX,cell.com
 DOMAIN-SUFFIX,clarivate.com
 DOMAIN-SUFFIX,cnki.net
@@ -165,12 +164,10 @@ DOMAIN-SUFFIX,peerj.com
 DOMAIN-SUFFIX,physiology.org
 DOMAIN-SUFFIX,pkulaw.com
 DOMAIN-SUFFIX,plos.org
-DOMAIN-SUFFIX,pmc.ncbi.nlm.nih.gov
 DOMAIN-SUFFIX,pnas.org
 DOMAIN-SUFFIX,princeton.edu
 DOMAIN-SUFFIX,proquest.com
 DOMAIN-SUFFIX,psyccareers.com
-DOMAIN-SUFFIX,pubmed.ncbi.nlm.nih.gov
 DOMAIN-SUFFIX,readcube.com
 DOMAIN-SUFFIX,researchgate.net
 DOMAIN-SUFFIX,routledgehandbooks.com
@@ -233,3 +230,8 @@ DOMAIN-SUFFIX,zlib.life
 DOMAIN-SUFFIX,zlibcdn.com
 DOMAIN-SUFFIX,zlibcdn2.com
 DOMAIN-SUFFIX,zotero.org
+
+DOMAIN-SUFFIX,cdn.ncbi.nlm.nih.gov
+DOMAIN-SUFFIX,pmc.ncbi.nlm.nih.gov
+DOMAIN-SUFFIX,pubmed.ncbi.nlm.nih.gov
+DOMAIN-SUFFIX,seer.cancer.gov
