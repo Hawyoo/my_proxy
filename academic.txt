@@ -231,5 +231,5 @@ DOMAIN-SUFFIX,zlibcdn.com
 DOMAIN-SUFFIX,zlibcdn2.com
 DOMAIN-SUFFIX,zotero.org
 
-DOMAIN-SUFFIX,ncbi.nlm.nih.gov
+DOMAIN-SUFFIX,nih.gov
 DOMAIN-SUFFIX,cancer.gov
