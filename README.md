@@ -1,4 +1,3 @@
-# 添加学术规则
 “全局扩展脚本”中加入以下内容：
 
 ```javascript
@@ -25,12 +24,7 @@ function addAcademic(config) {
     config.rules = [academicRule];
   }
 }
-```
 
-# 添加其他规则
-“全局扩展脚本”中加入以下内容：
-
-```javascript
 function addOther(config) {
   const otherProvider = {
     type: "http",
@@ -54,11 +48,7 @@ function addOther(config) {
     config.rules = [otherRule];
   }
 }
-```
 
-# 调用
-“全局扩展脚本”的最后根据需要加入以下内容：
-```javascript
 function main(config) {
   addAcademic(config);
   addOther(config);
