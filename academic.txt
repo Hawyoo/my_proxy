@@ -232,5 +232,6 @@ DOMAIN-SUFFIX,zlibcdn2.com
 DOMAIN-SUFFIX,zotero.org
 
 DOMAIN-SUFFIX,clinicaltrials.gov
+DOMAIN-SUFFIX,cdc.gov
 DOMAIN-SUFFIX,nih.gov
 DOMAIN-SUFFIX,cancer.gov
