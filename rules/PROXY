@@ -1,0 +1,4 @@
+# Reserved for future PROXY rules.
+# Keep this file for strategy-based structure consistency.
+# Example format:
+# DOMAIN-SUFFIX,example.com
