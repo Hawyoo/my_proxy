@@ -279,3 +279,4 @@ DOMAIN-SUFFIX,alibaba.cdn.steampipe.steamcontent.com
 # =========================
 DOMAIN-SUFFIX,cn.bing.com
 DOMAIN-SUFFIX,cloudflare.com
+DOMAIN-SUFFIX,immersivetranslate.com
