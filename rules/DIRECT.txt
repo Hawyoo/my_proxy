@@ -278,3 +278,4 @@ DOMAIN-SUFFIX,alibaba.cdn.steampipe.steamcontent.com
 # Group: Miscellaneous
 # =========================
 DOMAIN-SUFFIX,cn.bing.com
+DOMAIN-SUFFIX,cloudflare.com
