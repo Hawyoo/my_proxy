@@ -241,6 +241,7 @@ DOMAIN-SUFFIX,clinicaltrials.gov
 DOMAIN-SUFFIX,cdc.gov
 DOMAIN-SUFFIX,nih.gov
 DOMAIN-SUFFIX,cancer.gov
+DOMAIN,cn.string-db.org
 
 # =========================
 # Group: Gaming platforms
