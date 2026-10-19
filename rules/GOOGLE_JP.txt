@@ -1,0 +1,70 @@
+# GOOGLE_JP — Google 及其常见服务统一走日本 URLTest
+# 包括 Google 搜索、账户登录、Gmail、Workspace、Gemini、YouTube、Play、Firebase、Google API/CDN。
+# Google 域名体系持续变化：此文件提供显式匹配；脚本另接入 MetaCubeX 的 Google/YouTube 动态域名集进行补全。
+# 某些 CDN/验证码/云托管域名可能被其他网站共享，命中时这些请求也会走日本。
+
+# Google 搜索与多国家/地区域名（包括 google.co.jp、google.com.hk 等）
+DOMAIN-REGEX,(?i)(^|\\.)google\\.(?:[a-z]{2,15}|(?:com|co|org|net|gov|edu)\\.[a-z]{2,3})$
+DOMAIN-SUFFIX,google
+DOMAIN-SUFFIX,g.co
+DOMAIN-SUFFIX,goo.gl
+DOMAIN-SUFFIX,withgoogle.com
+DOMAIN-SUFFIX,blog.google
+DOMAIN-SUFFIX,madeby.google
+DOMAIN-SUFFIX,googleblog.com
+
+# Google 账户 / Gmail / Workspace / 云端服务 / API
+DOMAIN-SUFFIX,gmail.com
+DOMAIN-SUFFIX,googlemail.com
+DOMAIN-SUFFIX,googleapis.com
+DOMAIN-SUFFIX,googleapis.cn
+DOMAIN-SUFFIX,googleusercontent.com
+DOMAIN-SUFFIX,googleusercontent.cn
+DOMAIN-SUFFIX,gstatic.com
+DOMAIN-SUFFIX,gstatic.cn
+DOMAIN-SUFFIX,ggpht.com
+DOMAIN-SUFFIX,googlehosted.com
+DOMAIN-SUFFIX,googlesource.com
+DOMAIN-SUFFIX,googletagmanager.com
+DOMAIN-SUFFIX,googletagservices.com
+DOMAIN-SUFFIX,google-analytics.com
+DOMAIN-SUFFIX,googleadservices.com
+DOMAIN-SUFFIX,googlesyndication.com
+DOMAIN-SUFFIX,googlecommerce.com
+DOMAIN-SUFFIX,googletraveladservices.com
+DOMAIN-SUFFIX,doubleclick.net
+DOMAIN-SUFFIX,2mdn.net
+
+# Gemini、DeepMind 与 NotebookLM
+DOMAIN-SUFFIX,deepmind.com
+DOMAIN-SUFFIX,deepmind.google
+DOMAIN-SUFFIX,notebooklm.google
+DOMAIN-SUFFIX,google.ai
+
+# YouTube / YouTube Music / 视频及图片 CDN
+DOMAIN-SUFFIX,youtube.com
+DOMAIN-SUFFIX,youtu.be
+DOMAIN-SUFFIX,youtube-nocookie.com
+DOMAIN-SUFFIX,youtubeeducation.com
+DOMAIN-SUFFIX,ytimg.com
+DOMAIN-SUFFIX,googlevideo.com
+DOMAIN-SUFFIX,youtubekids.com
+
+# Android / Google Play / Firebase / FCM / 网络更新
+DOMAIN-SUFFIX,android.com
+DOMAIN-SUFFIX,gvt1.com
+DOMAIN-SUFFIX,gvt2.com
+DOMAIN-SUFFIX,gvt3.com
+DOMAIN-SUFFIX,1e100.net
+DOMAIN-SUFFIX,firebase.com
+DOMAIN-SUFFIX,firebaseio.com
+DOMAIN-SUFFIX,firebaseapp.com
+DOMAIN-SUFFIX,firebasestorage.app
+
+# reCAPTCHA 常用于非 Google 网站，因此它们的验证码请求也会走日本。
+DOMAIN-SUFFIX,recaptcha.net
+
+# Google Cloud 自身域名（不主动包含 appspot.com、run.app 等大量第三方托管站点）
+DOMAIN-SUFFIX,googlecloud.com
+DOMAIN-SUFFIX,gcr.io
+DOMAIN-SUFFIX,pkg.dev
