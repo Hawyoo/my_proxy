@@ -183,6 +183,24 @@ function main(config) {
 
 `OPENAI_JP.txt` 中的 `DOMAIN-SUFFIX,oaistatsig.com` **已经包含** `api.oaistatsig.com`；Google 登录所依赖的 Google 域名则通过 `GOOGLE_JP` 绑定到同一个日本代理组。个别 WorkOS、Cloudflare 验证等共享域名在 OpenAI 登录时也可能走日本；其他网站访问同一精确域名时同样会匹配。
 
+## 4. 学术资源与校园网直连
+
+想通过学校订阅访问 Wiley、Springer、Elsevier 等学术数据库时，将出版社**论文正文、PDF、机构认证所必需的域名**加入 [rules/DIRECT.txt](./rules/DIRECT.txt)；实际直连出口仍由**电脑当前网络/校园 VPN 的系统路由**决定，`DIRECT` 不会自动获得校园网身份。Wiley 官方支持校园 IP 范围识别、机构统一身份认证和学校代理入口。
+
+**为什么已经直连 wiley.com，仍有流量走代理？** `DOMAIN-SUFFIX,wiley.com` 只匹配 `wiley.com` 及其子域名，不匹配 `wiley.scienceconnect.io` 等第三方主机。已增加 `wileyonlinelibrary.com` 和以下三个**精确主机名**，不会把整个第三方公司域名直接放行：
+
+```text
+DOMAIN-SUFFIX,wiley.com
+DOMAIN-SUFFIX,wileyonlinelibrary.com
+DOMAIN,wiley.scienceconnect.io
+DOMAIN,wiley.met.vgwort.de
+DOMAIN,wiley.grapeshot.co.uk
+```
+
+其中 `vgwort.de` 与 `grapeshot.co.uk` 主要属于统计/广告生态，并非 Wiley 学术授权的必需域名；直连这些请求会向第三方暴露当前校园出口 IP。若只关心正文和 PDF，可以从 DIRECT 中删除这些统计/广告规则，或在充分确认网站不受影响后选择拦截。
+
+**规则更新后仍走代理怎么办？** 在 Clash Verge 手动刷新 **DIRECT 规则集**或等待其定期更新（24 小时）；检查 **规则（Rule）模式**及全局扩展脚本已启用；关闭旧的相关连接，刷新论文页面；在「连接」页面查看规则匹配是否为 `RULE-SET,DIRECT`。如果仍不能使用校园订阅，应先在校园 Wi-Fi / 校园 VPN 下检查 Wiley 是否显示机构授权，再确认系统路由确实经过学校的出口。不要仅根据浏览器能打开网页就断定已获取机构全文权限。
+
 ## 4. 常见问题
 
 **我选了其他国家节点，OpenAI 和 Google 仍走日本吗？** 在 **规则（Rule）模式**、相关流量**已被 Mihomo 接管**且命中这些规则时，是的。「🚀节点选择」当前手动选中哪个国家，不会改变两个 JP 规则集的出口。
