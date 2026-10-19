@@ -171,7 +171,7 @@ function main(config) {
 
 | 优先级 | 文件 / 规则集 | 出口 | 说明 |
 | --- | --- | --- | --- |
-| 1 | [REJECT.txt](./rules/REJECT.txt) | `REJECT` | 自定义拒绝 |
+| 1 | [REJECT.txt](./rules/REJECT.txt) | `REJECT` | 常见广告投放、推荐和跨站追踪（30 条） |
 | 2 | [OPENAI_JP.txt](./rules/OPENAI_JP.txt) | 🇯🇵日本节点 `URLTest` | OpenAI / ChatGPT 核心服务和指定登录依赖 |
 | 3 | [GOOGLE_JP.txt](./rules/GOOGLE_JP.txt) | 🇯🇵日本节点 `URLTest` | Google 搜索、账号登录、Gmail、Gemini、YouTube、Play 等 |
 | 4 | MetaCubeX Google / YouTube 自动更新域名集 | 🇯🇵日本节点 `URLTest` | 补充 Google 相关域名 |
@@ -179,9 +179,22 @@ function main(config) {
 | 6 | [PROXY.txt](./rules/PROXY.txt) | 🚀节点选择 `Selector` | 自定义普通代理 |
 | 7 | 订阅原有规则 | 原有出口 | 原样保留 |
 
-`REJECT.txt` 和 `PROXY.txt` 目前只包含一个 `.invalid` 占位域名，不会屏蔽正常网站。需要新规则时直接往文件添加行，例如 `DOMAIN-SUFFIX,example.com`，不用在文件每行末尾加 `DIRECT` 或 `REJECT`；由脚本决定出口。编辑 GitHub 文件后等待远程规则更新，或在 Clash Verge 中手动刷新规则集。
+`REJECT.txt` 已包含 **30 条保守广告/追踪拦截规则**，`PROXY.txt` 目前仍只有一条 `.invalid` 占位域名。需要新规则时直接往文件添加行，例如 `DOMAIN-SUFFIX,example.com`，不用在每行末尾加 `DIRECT` 或 `REJECT`；由脚本决定出口。编辑 GitHub 文件后等待远程规则更新，或在 Clash Verge 中手动刷新规则集。
 
 `OPENAI_JP.txt` 中的 `DOMAIN-SUFFIX,oaistatsig.com` **已经包含** `api.oaistatsig.com`；Google 登录所依赖的 Google 域名则通过 `GOOGLE_JP` 绑定到同一个日本代理组。个别 WorkOS、Cloudflare 验证等共享域名在 OpenAI 登录时也可能走日本；其他网站访问同一精确域名时同样会匹配。
+
+### REJECT 广告与追踪域名说明
+
+目前 [rules/REJECT.txt](./rules/REJECT.txt) 采用**保守清单（30 条）**，主要涵盖：
+
+- **广告交易与实时竞价**：`adnxs.com`、`adsrvr.org`、`pubmatic.com`、`rubiconproject.com` 等。
+- **广告内容推荐**：`taboola.com`、`outbrain.com`、`mgid.com` 等。
+- **跨站追踪与画像**：`scorecardresearch.com`、`quantserve.com`、`demdex.net` 等。
+- **广告追踪像素**：`bat.bing.com`（仅这一主机，而非整个 `bing.com`）。
+
+`REJECT` 优先级**高于** `OPENAI_JP`、`GOOGLE_JP` 和 `DIRECT`。为了避免破坏你的日区登录与校园网权限，本清单**不包括** Google / DoubleClick 的广告统计域名、WorkOS / Cloudflare 登录校验域名，也没有把 Wiley 页面涉及的 `grapeshot.co.uk` 等第三方域名拦截。因此它是**低误伤起点**，并不是覆盖所有广告的完整拦截列表。
+
+**验证方式**：更新远程 REJECT 规则集后，在 Clash Verge「连接」页查看例如 `adnxs.com` 是否命中 `RULE-SET,REJECT`。如果某网页内容、登录或加载异常，查看被 REJECT 命中的域名；确认误拦截后，删除对应的 `REJECT.txt` 规则并重新更新规则集、关闭旧连接重试。不要为了屏蔽广告而直接加入 `googleapis.com`、`gstatic.com`、`challenges.cloudflare.com` 等广泛使用的服务域名。
 
 ## 4. 学术资源与校园网直连
 
