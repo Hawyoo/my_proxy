@@ -4,7 +4,7 @@
 # 某些 CDN/验证码/云托管域名可能被其他网站共享，命中时这些请求也会走日本。
 
 # Google 搜索与多国家/地区域名（包括 google.co.jp、google.com.hk 等）
-DOMAIN-REGEX,(?i)(^|\\.)google\\.(?:[a-z]{2,15}|(?:com|co|org|net|gov|edu)\\.[a-z]{2,3})$
+DOMAIN-REGEX,(?i)(^|\.)google\.(?:[a-z]{2,15}|(?:com|co|org|net|gov|edu)\.[a-z]{2,3})$
 DOMAIN-SUFFIX,google
 DOMAIN-SUFFIX,g.co
 DOMAIN-SUFFIX,goo.gl
