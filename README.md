@@ -1,37 +1,54 @@
 # 自定义 Clash 分流规则
 
-适用于 Clash Verge Rev（Mihomo 内核）。在保留订阅原有规则和代理组的同时，加载自定义分流规则。
+适用于 Clash Verge Rev / Mihomo 内核。保留订阅原有策略组与规则，通过 GitHub 维护自定义 `DIRECT`、`REJECT`、`PROXY` 及地区专属规则。
 
-## 使用方式
+## 安装 / 更新
 
-1. 在 Clash Verge Rev 中打开「全局扩展脚本」（或对应订阅的扩展脚本）。
-2. 将 [scripts/rules-loader.js](./scripts/rules-loader.js) 的**完整内容**复制进去，保存并启用。
-3. 刷新 / 重新应用订阅，使用**规则（Rule）模式**。
-4. 进入「连接」检查 `chatgpt.com`、`api.oaistatsig.com`：应命中 `OPENAI`，通过「🇯🇵日本节点」URLTest 组出站。
+1. 在 Clash Verge Rev 中打开「全局扩展脚本」（或当前订阅对应的脚本扩展）。
+2. **将 [scripts/rules-loader.js](./scripts/rules-loader.js) 的完整内容复制进去并保存/启用**。
+3. 刷新并重新应用当前订阅，确认使用 **规则（Rule）模式**，不是全局（Global）模式。
+4. 在「连接」中检查 `chatgpt.com`、`api.oaistatsig.com`、`accounts.google.com`、`www.youtube.com` 等流量的规则和出站代理组：应指向日本 URLTest 组。
 
-> 本项目的 JS 脚本不会因为 GitHub 上更新就自动更新客户端：脚本内容变化后，需要重新复制到 Clash Verge 并重新应用。远程规则文件按 `interval: 86400` 定期更新，也可手动刷新。
+> **重要**：GitHub 的 JS 变更不会自动更新到你已粘贴在 Clash Verge 的本地脚本。修改脚本后要重新复制 / 应用；下列远程域名规则才会按 `interval: 86400` 进行自动更新。
 
-## 规则与顺序
+## 规则优先级
 
-| 优先级 | GitHub 文件 | 出口 | 说明 |
-| --- | --- | --- | --- |
-| 1 | [rules/REJECT](./rules/REJECT) | REJECT | 自定义拦截（目前为空白占位） |
-| 2 | [rules/OPENAI.txt](./rules/OPENAI.txt) | 🇯🇵日本节点 | OpenAI 自有域名 + 少量明确的登录依赖 |
-| 3 | [rules/DIRECT.txt](./rules/DIRECT.txt) | DIRECT | 自定义直连 |
-| 4 | [rules/PROXY](./rules/PROXY) | 🚀节点选择 | 自定义代理（目前为空白占位） |
-| 5 | 订阅原有规则 | 保留原值 | 不替换原有规则集或默认策略 |
+| 优先级 | 规则集（GitHub） | 目的地 |
+| --- | --- | --- |
+| 1 | [REJECT](./rules/REJECT) | `REJECT`，自定义屏蔽（目前为占位） |
+| 2 | [OPENAI_JP.txt](./rules/OPENAI_JP.txt) | 现有「🇯🇵日本节点」URLTest 组 |
+| 3 | [GOOGLE_JP.txt](./rules/GOOGLE_JP.txt) | 同一个「🇯🇵日本节点」URLTest 组 |
+| 4 | `GOOGLE_JP_YOUTUBE`（MetaCubeX 自动更新） | 同一个「🇯🇵日本节点」URLTest 组 |
+| 5 | `GOOGLE_JP_SITE`（MetaCubeX 自动更新） | 同一个「🇯🇵日本节点」URLTest 组 |
+| 6 | [DIRECT.txt](./rules/DIRECT.txt) | `DIRECT` |
+| 7 | [PROXY](./rules/PROXY) | 现有「🚀节点选择」Selector 组（目前为占位） |
+| 8 | 订阅原有规则 | 不改变 |
 
-- **日本节点**必须为现有的 `url-test` 代理组，优先按准确名称 `🇯🇵日本节点` 查找；找不到时查找其他名字包含「日本节点」的 URLTest 组。若不存在则跳过 OPENAI 专用规则并输出警告，不创建无效的代理组引用。
-- **节点选择**为现有的 `select` 代理组，优先匹配 `🚀节点选择`。找不到时跳过自定义 PROXY 分流。
-- `REJECT` 和 `PROXY` 文件没有 `.txt` 扩展名，脚本按仓库中真实文件名引用，避免 404。
-- 自定义规则集使用 `classical` / `text` 格式，每行类似 `DOMAIN-SUFFIX,example.com`，**不在文件行尾添加策略名**；由扩展脚本绑定 DIRECT、REJECT 或代理组。
+### OpenAI / ChatGPT 日区
 
-## 关于日本地区和 IP
+`OPENAI_JP.txt` 包含 `openai.com`、`chatgpt.com`、`oaistatic.com`、`oaiusercontent.com`、`oaistatsig.com` 等 OpenAI 自有服务和少量官方网络文档指出的登录相关精确域名（WorkOS、Cloudflare 验证、Apple 登录相关资源）。`DOMAIN-SUFFIX,oaistatsig.com` **已经覆盖** `api.oaistatsig.com`。
 
-- 在**规则（Rule）模式**且流量被 Mihomo 接管时，命中 OPENAI 规则的连接会走日本 URLTest 组，**不受普通「🚀节点选择」当前手动节点的影响**。全局（Global）模式不提供这一保证。
-- URLTest 可能在不同日本节点间切换，因此不能保证始终是同一个公网 IP。要求出口长期稳定时，可以另建手动 `select` 组并锁定具体日本节点。
-- `rules/OPENAI.txt` 只纳入 OpenAI 核心域名以及少量官方网络说明中列出的 WorkOS、Cloudflare 精确域名，不代理整个 Google、Apple、WorkOS 或 Cloudflare 域名。共享域名仍可能被其他网站使用；OpenAI 如何判定账号地区并不完全公开。
-- `DOMAIN-SUFFIX,oaistatsig.com` 已包含 `api.oaistatsig.com`。
-- 这套规则用于分流，**不能绕过 SSL 证书校验**；如 ChatGPT App 仍报告异常证书，需要继续诊断 VPN、DNS 和 HTTPS 拦截。
+Google 账号登录 ChatGPT 时，`accounts.google.com` 等由 `GOOGLE_JP` 规则分流到**同一个日本组**。若通过 Apple 身份登录，其他未列出的 Apple 登录域名仍可能根据原订阅走其他出口；可根据连接日志按需补充。
 
-参考：[OpenAI 网络建议](https://help.openai.com/en/articles/9247338-network-recommendations-for-chatgpt-errors-on-web-and-apps)。
+### Google 日区
+
+`GOOGLE_JP.txt` 覆盖 Google 多国家搜索域名（含 `google.co.jp`、`google.com.hk`）、账号认证、Gmail、Workspace、Google API、CDN、Play / Android、Firebase、Gemini / DeepMind、YouTube 与相关视频域名。对 Google 国别域名使用 `DOMAIN-REGEX`，避免简单 `DOMAIN-KEYWORD,google` 过度误伤。
+
+另外，脚本直接引用 [MetaCubeX Google](https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/google.mrs) 和 [YouTube](https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/youtube.mrs) 的持续更新的 `mrs` 规则集，以补充以后出现的服务域名。自定义 `GOOGLE_JP.txt` 与这两个外部规则集**均使用日本节点**。
+
+> 「全部 Google」应理解为**被 Mihomo 接管且匹配到上述规则集的 Google 相关流量**，不承诺覆盖未被 VPN/TUN 接管的请求、只有目标 IP 的连接或任何未来新域名。某些 Google SDK、reCAPTCHA、Google Cloud 或 CDN 域名供其他网站使用，它们命中后也会走日本节点，这是统一 Google 出口的预期副作用。
+
+## 命名和今后的地区扩展
+
+地区后缀明确写进文件名，后续可以增加 `OPENAI_US.txt`、`GOOGLE_US.txt`、`OPENAI_SG.txt` 等，而不是在文件内混合多个地区出口。相应地添加新的规则提供者，并将它们绑定到对应地区策略组。**不要同时给同一域名启用互相冲突的地区规则**，否则由规则顺序决定。
+
+## 细节与风险
+
+- **规则（Rule）模式**下，命中 `OPENAI_JP`、`GOOGLE_JP` 的请求不会随「🚀节点选择」手动切换而改出口；**全局（Global）模式不保证**这一点。
+- 「🇯🇵日本节点」必须是已有的 `url-test` 组。脚本优先识别此精确名称，找不到时寻找名称包含「日本节点」的 URLTest；找不到会发出警告并跳过地区专属规则。
+- URLTest 可能在日本节点间自动切换；统一日本地区**不等于固定公网 IP**。如果希望一个固定 IP，应另建 Selector 并固定一个可靠的日本节点，但节点服务商仍可能改变 IP。
+- 某些第三方身份验证 / CDN 域名为多个网站共用；命中精确域名的其他网站请求也会经由日本，并不意味着 OpenAI 会因此更改账号地区。账号地区、安全风控取决于服务端多种因素。
+- 对于 `DIRECT`、`REJECT`、`PROXY`，仓库目前真实文件名分别为 `DIRECT.txt`、`REJECT`、`PROXY`。脚本按实际文件名加载，未擅自覆盖原域名清单。
+- 代理规则不会绕过 ChatGPT App 的 SSL 证书安全校验。出现「非预期 SSL 证书」错误仍需排查系统 DNS、VPN、HTTPS 中间人拦截等。
+
+参考：[Mihomo 路由规则](https://wiki.metacubex.one/config/rules/)、[Mihomo 官方配置示例](https://wiki.metacubex.one/example/conf/)、[OpenAI 网络建议](https://help.openai.com/zh-hans-cn/articles/9247338-network-recommendations-for-chatgpt-errors-on-web-and-apps)。
