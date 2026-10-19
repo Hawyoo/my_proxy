@@ -1,5 +1,44 @@
-# REJECT 自定义规则列表：一行一条，不要写最后的策略组名称。
-# 示例：DOMAIN-SUFFIX,ads.example.com
-# 以下使用 RFC 2606 保留的 .invalid 作为无实际影响的占位规则。
-# 添加真实规则后，可以删除占位条目。
-DOMAIN,clash-placeholder.invalid
+# 自定义 REJECT 规则：保守拦截常见的广告竞价、内容推荐和跨站追踪。
+# Mihomo classical/text 格式；每行写匹配条件，不在行尾写 REJECT。
+# 注意：本规则集在 OPENAI_JP、GOOGLE_JP 和 DIRECT 之前匹配。
+# 为避免影响日本区账号登录、Google 全家桶及 Wiley 校园网直连，
+# 不屏蔽 google* / doubleclick.net / WorkOS / Cloudflare 验证 / Wiley 相关域名。
+# 一些广告服务也用于网站数据统计或内容推荐，误拦截时请删除相应行后刷新规则。
+
+# 广告交易平台 / 程序化竞价
+DOMAIN-SUFFIX,adnxs.com
+DOMAIN-SUFFIX,adsrvr.org
+DOMAIN-SUFFIX,bidswitch.net
+DOMAIN-SUFFIX,casalemedia.com
+DOMAIN-SUFFIX,contextweb.com
+DOMAIN-SUFFIX,openx.net
+DOMAIN-SUFFIX,pubmatic.com
+DOMAIN-SUFFIX,rubiconproject.com
+DOMAIN-SUFFIX,smartadserver.com
+DOMAIN-SUFFIX,adform.net
+DOMAIN-SUFFIX,smaato.net
+DOMAIN-SUFFIX,inmobi.com
+DOMAIN-SUFFIX,33across.com
+DOMAIN-SUFFIX,sharethrough.com
+DOMAIN-SUFFIX,lijit.com
+DOMAIN-SUFFIX,triplelift.com
+DOMAIN-SUFFIX,yieldmo.com
+
+# 信息流广告 / 内容推荐
+DOMAIN-SUFFIX,taboola.com
+DOMAIN-SUFFIX,outbrain.com
+DOMAIN-SUFFIX,mgid.com
+DOMAIN-SUFFIX,criteo.net
+
+# 跨站画像 / 广告归因 / 访问统计
+DOMAIN-SUFFIX,scorecardresearch.com
+DOMAIN-SUFFIX,quantserve.com
+DOMAIN-SUFFIX,demdex.net
+DOMAIN-SUFFIX,bluekai.com
+DOMAIN-SUFFIX,everesttech.net
+DOMAIN-SUFFIX,moatads.com
+DOMAIN-SUFFIX,adsafeprotected.com
+DOMAIN-SUFFIX,serving-sys.com
+
+# 独立广告追踪像素（仅精确主机名）
+DOMAIN,bat.bing.com
