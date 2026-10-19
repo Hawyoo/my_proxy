@@ -1,4 +1,5 @@
-# Reserved for future REJECT rules.
-# Keep this file for strategy-based structure consistency.
-# Example format:
-# DOMAIN-SUFFIX,ads.example.com
+# REJECT 自定义规则列表：一行一条，不要写最后的策略组名称。
+# 示例：DOMAIN-SUFFIX,ads.example.com
+# 以下使用 RFC 2606 保留的 .invalid 作为无实际影响的占位规则。
+# 添加真实规则后，可以删除占位条目。
+DOMAIN,clash-placeholder.invalid
