@@ -224,6 +224,11 @@ DOMAIN-SUFFIX,webofscience.com
 DOMAIN-SUFFIX,westlaw.com
 DOMAIN-SUFFIX,westlawchina.com
 DOMAIN-SUFFIX,wiley.com
+DOMAIN-SUFFIX,wileyonlinelibrary.com
+# Wiley 页面调用的第三方主机：精确主机匹配，避免其它网站被广泛影响
+DOMAIN,wiley.scienceconnect.io
+DOMAIN,wiley.met.vgwort.de
+DOMAIN,wiley.grapeshot.co.uk
 DOMAIN-SUFFIX,wkap.nl
 DOMAIN-SUFFIX,worldbank.org
 DOMAIN-SUFFIX,worldscientific.com
