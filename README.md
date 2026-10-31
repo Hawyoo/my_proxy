@@ -1,6 +1,6 @@
 # 自定义 Clash 代理规则
 
-个人维护的 Clash Verge Rev / Mihomo 规则集：`DIRECT` / `REJECT` / `PROXY`，以及 **OpenAI 日本区** 与 **Google 日本区** 专属分流。
+个人维护的 Clash Verge Rev / Mihomo 规则集：`DIRECT` / `REJECT` / `PROXY`。OpenAI 与 Google 不再被强制指定日本节点，按当前订阅原有规则处理。
 
 > **一句话用法**：把下方**完整 JavaScript** 复制到 Clash Verge 的「全局扩展脚本」，保存、应用订阅，再切换到「规则（Rule）」模式。**不要**将这些 JavaScript 粘贴到 YAML 配置或普通规则编辑器中。
 
@@ -10,8 +10,8 @@
 2. **删除以前粘贴的旧版 `addDirect`、`addReject`、`main` 等整段代码**，全部替换成下一节这段脚本。不要同时保留两个 `main(config)`，也不要再叠加以前单独的同类规则。
 3. 保存脚本并**启用**它，然后刷新 / 重新应用订阅。如果提示脚本错误，先检查是否完整复制，包括最后一个 `}`。
 4. 将 Clash Verge 的模式切到 **规则（Rule）**。不要使用全局（Global）模式来检验按域名分流。
-5. 进入「代理」确认现有组名为 **🇯🇵日本节点**（`URLTest`）和 **🚀节点选择**（`Selector`）；代码支持以包含「日本节点」「节点选择」的名称查找。如果你的名称完全不同，修改脚本 `main(config)` 中的匹配部分。
-6. 打开 ChatGPT 和 Google，再到 **连接（Connections）** 查看请求命中的策略组。预期 `chatgpt.com`、`api.oaistatsig.com`、`accounts.google.com`、`youtube.com` 等全部经过 **🇯🇵日本节点** 组。其他网站仍按原订阅或自定义规则处理。
+5. 进入「代理」确认现有组名为 **🚀节点选择**（`Selector`）；代码支持以包含「节点选择」的名称查找。脚本不再要求日本 URLTest 组。
+6. 打开 ChatGPT 和 Google，再到 **连接（Connections）** 查看请求命中的策略组。OpenAI 与 Google 不再由本脚本强制走日本节点，而是按订阅原有规则处理；只有命中你自行维护的 `DIRECT.txt`、`PROXY.txt` 或 `REJECT.txt` 域名时，才应用对应自定义规则。
 
 > 扩展脚本本身**不会随 GitHub 自动更新**：当 `scripts/rules-loader.js` 发生变化，需要重新复制到 Clash Verge。域名规则文件则由 Mihomo 按 `interval: 86400`（24 小时）自动检查更新。
 
@@ -24,7 +24,7 @@
 // 直接复制本文件全部内容到 Clash Verge 的 JavaScript 扩展脚本。
 //
 // 规则最终优先级：
-// REJECT > OPENAI_JP > GOOGLE_JP > Google/YouTube 补充 > DIRECT > PROXY > 原订阅规则
+// REJECT > PROXY > DIRECT > 原订阅规则
 //
 // 注意：下方函数在 main() 中按相反顺序调用，因为 unshift() 会将规则插入最前面。
 
@@ -41,19 +41,6 @@ function addDirect(config) {
   config.rules.unshift("RULE-SET,DIRECT,DIRECT");
 }
 
-function addReject(config) {
-  const rejectProvider = {
-    type: "http",
-    behavior: "classical",
-    format: "text",
-    url: "https://raw.githubusercontent.com/Hawyoo/my_proxy/main/rules/REJECT.txt",
-    path: "./providers/REJECT.txt",
-    interval: 86400
-  };
-  config["rule-providers"]["REJECT"] = rejectProvider;
-  config.rules.unshift("RULE-SET,REJECT,REJECT");
-}
-
 function addProxy(config, manualGroup) {
   const proxyProvider = {
     type: "http",
@@ -67,53 +54,17 @@ function addProxy(config, manualGroup) {
   config.rules.unshift("RULE-SET,PROXY," + manualGroup);
 }
 
-function addOpenAIJP(config, japanGroup) {
-  const openaiProvider = {
+function addReject(config) {
+  const rejectProvider = {
     type: "http",
     behavior: "classical",
     format: "text",
-    url: "https://raw.githubusercontent.com/Hawyoo/my_proxy/main/rules/OPENAI_JP.txt",
-    path: "./providers/OPENAI_JP.txt",
+    url: "https://raw.githubusercontent.com/Hawyoo/my_proxy/main/rules/REJECT.txt",
+    path: "./providers/REJECT.txt",
     interval: 86400
   };
-  config["rule-providers"]["OPENAI_JP"] = openaiProvider;
-  config.rules.unshift("RULE-SET,OPENAI_JP," + japanGroup);
-}
-
-function addGoogleJP(config, japanGroup) {
-  const googleProvider = {
-    type: "http",
-    behavior: "classical",
-    format: "text",
-    url: "https://raw.githubusercontent.com/Hawyoo/my_proxy/main/rules/GOOGLE_JP.txt",
-    path: "./providers/GOOGLE_JP.txt",
-    interval: 86400
-  };
-  config["rule-providers"]["GOOGLE_JP"] = googleProvider;
-  config.rules.unshift("RULE-SET,GOOGLE_JP," + japanGroup);
-}
-
-function addGoogleSupplementJP(config, japanGroup) {
-  // Google/YouTube 动态规则，补充 GOOGLE_JP.txt 未列出的域名。
-  const base = "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/";
-  config["rule-providers"]["GOOGLE_JP_SITE"] = {
-    type: "http",
-    behavior: "domain",
-    format: "mrs",
-    url: base + "google.mrs",
-    path: "./providers/GOOGLE_JP_SITE.mrs",
-    interval: 86400
-  };
-  config["rule-providers"]["GOOGLE_JP_YOUTUBE"] = {
-    type: "http",
-    behavior: "domain",
-    format: "mrs",
-    url: base + "youtube.mrs",
-    path: "./providers/GOOGLE_JP_YOUTUBE.mrs",
-    interval: 86400
-  };
-  config.rules.unshift("RULE-SET,GOOGLE_JP_SITE," + japanGroup);
-  config.rules.unshift("RULE-SET,GOOGLE_JP_YOUTUBE," + japanGroup);
+  config["rule-providers"]["REJECT"] = rejectProvider;
+  config.rules.unshift("RULE-SET,REJECT,REJECT");
 }
 
 function main(config) {
@@ -124,40 +75,35 @@ function main(config) {
     config.rules = [];
   }
 
-  // 清除此前脚本添加的旧规则，避免刷新时重复；其他订阅规则原样保留。
-  const oldNames = [
+  // 清除本脚本旧版注入的规则，避免 OpenAI / Google 日本分流残留。
+  const managedNames = [
     "REJECT", "DIRECT", "PROXY", "OPENAI", "OPENAI_JP",
     "GOOGLE_JP", "GOOGLE_JP_SITE", "GOOGLE_JP_YOUTUBE"
   ];
   config.rules = config.rules.filter(rule => {
     if (typeof rule !== "string") return true;
-    return !oldNames.some(name => rule.startsWith("RULE-SET," + name + ","));
+    return !managedNames.some(name => rule.startsWith("RULE-SET," + name + ","));
   });
-  delete config["rule-providers"]["OPENAI"];  // 旧版无地区后缀的残留项
+
+  // 删除旧版脚本注册的专用 Provider；不影响订阅中的其他规则。
+  [
+    "OPENAI", "OPENAI_JP", "GOOGLE_JP",
+    "GOOGLE_JP_SITE", "GOOGLE_JP_YOUTUBE"
+  ].forEach(name => delete config["rule-providers"][name]);
 
   const groups = Array.isArray(config["proxy-groups"]) ? config["proxy-groups"] : [];
-  const jp = groups.find(g => g.name === "🇯🇵日本节点" && g.type === "url-test")
-    || groups.find(g => g.type === "url-test" && typeof g.name === "string"
-      && g.name.includes("日本节点"));
   const manual = groups.find(g => g.name === "🚀节点选择" && g.type === "select")
-    || groups.find(g => g.type === "select" && typeof g.name === "string"
-      && g.name.includes("节点选择"));
+    || groups.find(g => g.name === "节点选择" && g.type === "select")
+    || groups.find(g => g.type === "select"
+      && typeof g.name === "string" && g.name.includes("节点选择"));
 
-  // 反向调用：后调用的函数匹配优先级更高。
+  // 恢复普通自定义规则：DIRECT、PROXY、REJECT，不再强制 OpenAI / Google 走日本。
+  addDirect(config);
+
   if (manual) {
     addProxy(config, manual.name);
   } else {
-    console.warn("[my_proxy] 未找到节点选择 Selector，自定义 PROXY 分流跳过。");
-  }
-
-  addDirect(config);
-
-  if (jp) {
-    addGoogleSupplementJP(config, jp.name);
-    addGoogleJP(config, jp.name);
-    addOpenAIJP(config, jp.name);
-  } else {
-    console.warn("[my_proxy] 未找到日本 URLTest，OPENAI_JP / GOOGLE_JP 不会启用。");
+    console.warn("[my_proxy] 未找到 Selector 节点选择组；自定义 PROXY 规则未启用。");
   }
 
   addReject(config);
@@ -172,16 +118,13 @@ function main(config) {
 | 优先级 | 文件 / 规则集 | 出口 | 说明 |
 | --- | --- | --- | --- |
 | 1 | [REJECT.txt](./rules/REJECT.txt) | `REJECT` | 常见广告投放、推荐和跨站追踪（30 条） |
-| 2 | [OPENAI_JP.txt](./rules/OPENAI_JP.txt) | 🇯🇵日本节点 `URLTest` | OpenAI / ChatGPT 核心服务和指定登录依赖 |
-| 3 | [GOOGLE_JP.txt](./rules/GOOGLE_JP.txt) | 🇯🇵日本节点 `URLTest` | Google 搜索、账号登录、Gmail、Gemini、YouTube、Play 等 |
-| 4 | MetaCubeX Google / YouTube 自动更新域名集 | 🇯🇵日本节点 `URLTest` | 补充 Google 相关域名 |
-| 5 | [DIRECT.txt](./rules/DIRECT.txt) | `DIRECT` | 自定义直连（原学术 / 其他域名清单） |
-| 6 | [PROXY.txt](./rules/PROXY.txt) | 🚀节点选择 `Selector` | 自定义普通代理 |
-| 7 | 订阅原有规则 | 原有出口 | 原样保留 |
+| 2 | [PROXY.txt](./rules/PROXY.txt) | 🚀节点选择 `Selector` | 自定义普通代理 |
+| 3 | [DIRECT.txt](./rules/DIRECT.txt) | `DIRECT` | 自定义直连（学术 / 其他域名清单） |
+| 4 | 订阅原有规则 | 原有出口 | 未命中自定义规则时，按订阅规则处理 |
 
 `REJECT.txt` 已包含 **30 条保守广告/追踪拦截规则**，`PROXY.txt` 目前仍只有一条 `.invalid` 占位域名。需要新规则时直接往文件添加行，例如 `DOMAIN-SUFFIX,example.com`，不用在每行末尾加 `DIRECT` 或 `REJECT`；由脚本决定出口。编辑 GitHub 文件后等待远程规则更新，或在 Clash Verge 中手动刷新规则集。
 
-`OPENAI_JP.txt` 中的 `DOMAIN-SUFFIX,oaistatsig.com` **已经包含** `api.oaistatsig.com`；Google 登录所依赖的 Google 域名则通过 `GOOGLE_JP` 绑定到同一个日本代理组。个别 WorkOS、Cloudflare 验证等共享域名在 OpenAI 登录时也可能走日本；其他网站访问同一精确域名时同样会匹配。
+为避免旧配置残留，脚本会清理此前注入的 `OPENAI`、`OPENAI_JP`、`GOOGLE_JP` 及 Google / YouTube 动态规则集引用，并删除这些旧版专用 Provider。此操作只清理本脚本此前添加的专用分流，不改动订阅中的其他规则，也不改动 `DIRECT.txt`、`PROXY.txt` 和 `REJECT.txt`。
 
 ### REJECT 广告与追踪域名说明
 
@@ -192,7 +135,7 @@ function main(config) {
 - **跨站追踪与画像**：`scorecardresearch.com`、`quantserve.com`、`demdex.net` 等。
 - **广告追踪像素**：`bat.bing.com`（仅这一主机，而非整个 `bing.com`）。
 
-`REJECT` 优先级**高于** `OPENAI_JP`、`GOOGLE_JP` 和 `DIRECT`。为了避免破坏你的日区登录与校园网权限，本清单**不包括** Google / DoubleClick 的广告统计域名、WorkOS / Cloudflare 登录校验域名，也没有把 Wiley 页面涉及的 `grapeshot.co.uk` 等第三方域名拦截。因此它是**低误伤起点**，并不是覆盖所有广告的完整拦截列表。
+`REJECT` 优先级**高于** `PROXY` 和 `DIRECT`。本清单**不包括** Google / DoubleClick 的广告统计域名，也没有把 Wiley 页面涉及的 `grapeshot.co.uk` 等第三方域名拦截。因此它是**低误伤起点**，并不是覆盖所有广告的完整拦截列表。
 
 **验证方式**：更新远程 REJECT 规则集后，在 Clash Verge「连接」页查看例如 `adnxs.com` 是否命中 `RULE-SET,REJECT`。如果某网页内容、登录或加载异常，查看被 REJECT 命中的域名；确认误拦截后，删除对应的 `REJECT.txt` 规则并重新更新规则集、关闭旧连接重试。不要为了屏蔽广告而直接加入 `googleapis.com`、`gstatic.com`、`challenges.cloudflare.com` 等广泛使用的服务域名。
 
@@ -216,19 +159,19 @@ DOMAIN,wiley.grapeshot.co.uk
 
 ## 5. 常见问题
 
-**我选了其他国家节点，OpenAI 和 Google 仍走日本吗？** 在 **规则（Rule）模式**、相关流量**已被 Mihomo 接管**且命中这些规则时，是的。「🚀节点选择」当前手动选中哪个国家，不会改变两个 JP 规则集的出口。
+**OpenAI 和 Google 还会自动走日本节点吗？** 不会。本脚本已移除 OpenAI / Google 日本专属规则，不会再强制指定日本出口。它们按当前订阅原有规则处理；如果你自行将相关域名加入 `DIRECT.txt`、`PROXY.txt` 或 `REJECT.txt`，则按对应自定义规则处理。
 
-**日本 URLTest 是否代表永远同一个日本公网 IP？** 不是。URLTest 可以根据延迟更换日本组中的节点。它的作用是指定日本**代理组**，不是固定某个出口公网 IP。若要尽量固定出口，应另建日本 Selector 并手动选定一个服务器。
+**自定义 PROXY 规则走哪个节点？** 命中 `PROXY.txt` 的流量交给现有的「🚀节点选择」Selector，由你当前选择的节点组决定出口；本脚本不会替你指定国家或地区。
 
-**为什么 Google 不只使用 GOOGLE_JP.txt？** Google 使用大量 CDN / 登录 / 视频域名；脚本还自动更新 [MetaCubeX Google](https://github.com/MetaCubeX/meta-rules-dat) 和 YouTube 域名集以补充遗漏。可能有第三方网站也使用同一 Google CDN、验证码等资源，它们会走日本；这并不等于你的 OpenAI 账号地区会因此改变。
+**规则优先级如何判断？** Mihomo 从上往下匹配，先命中的规则生效。本脚本注入顺序为 `REJECT > PROXY > DIRECT > 原订阅规则`。因此同一域名同时出现在多个自定义规则文件时，优先级更高的规则生效。
 
-**可不可以覆盖 Google / OpenAI 的绝对全部流量？** 只保证按已配置规则匹配的、进入 Mihomo 的流量。未进入 VPN/TUN 的连接、部分仅 IP 连接及未来新域名无法保证。遇到新的目标域名可追加至对应 `_JP.txt` 文件。
+**自定义规则是否覆盖所有流量？** 不会。它只处理明确列入规则文件、且已被 Mihomo 接管的域名。未命中的流量继续按订阅原有规则处理。
 
-**我之前在 FlClash 遇到 SSL 证书异常，这些分流规则能修好吗？** 不一定。DNS / TLS 中间人拦截或 Android VPN 兼容性问题即便使用日本出口仍可能出现，不能通过关闭 App 的证书安全校验来解决。
+**我之前在 FlClash 遇到 SSL 证书异常，这些规则能修好吗？** 不一定。DNS / TLS 中间人拦截或 Android VPN 兼容性问题仍可能发生，不能通过关闭 App 的证书安全校验来解决。
 
 ## 6. 命名约定
 
-地区专属规则采用 `服务_地区.txt` 命名：目前为 `OPENAI_JP.txt`、`GOOGLE_JP.txt`，今后可以再建 `OPENAI_US.txt`、`GOOGLE_SG.txt` 等，并在脚本中绑定到不同地区的策略组。**不要给同一域名同时安排互相冲突的地区规则**；若有冲突，以规则优先级决定出口。
+当前仓库维护的规范规则文件为 `rules/DIRECT.txt`、`rules/PROXY.txt` 和 `rules/REJECT.txt`。OpenAI / Google 日本专属规则文件已从当前配置中移除，不再由脚本加载。
 
 项目的旧根目录 `academic.txt` / `other.txt` 内容已合并在 `rules/DIRECT.txt`；旧的 `rules/REJECT` / `rules/PROXY` 已统一更名为 `.txt`。请只维护表中列出的规范文件，避免旧路径残留。
 
