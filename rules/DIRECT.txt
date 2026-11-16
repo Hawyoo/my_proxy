@@ -279,6 +279,8 @@ DOMAIN-SUFFIX,cdn-ali.content.steamchina.com
 DOMAIN-SUFFIX,xz.pphimalayanrt.com
 DOMAIN-SUFFIX,lv.queniujq.cn
 DOMAIN-SUFFIX,alibaba.cdn.steampipe.steamcontent.com
+# Steam302 域名直连
+DOMAIN-SUFFIX,steam302.xyz
 
 # =========================
 # Group: Miscellaneous
@@ -287,4 +289,3 @@ DOMAIN-SUFFIX,cn.bing.com
 DOMAIN-SUFFIX,cloudflare.com
 DOMAIN-SUFFIX,immersivetranslate.com
 
-DOMAIN-SUFFIX,steam302.xyz
