@@ -122,7 +122,7 @@ function main(config) {
 | 3 | [DIRECT.txt](./rules/DIRECT.txt) | `DIRECT` | 自定义直连（学术 / 其他域名清单） |
 | 4 | 订阅原有规则 | 原有出口 | 未命中自定义规则时，按订阅规则处理 |
 
-`REJECT.txt` 已包含 **30 条保守广告/追踪拦截规则**，`PROXY.txt` 目前仍只有一条 `.invalid` 占位域名。需要新规则时直接往文件添加行，例如 `DOMAIN-SUFFIX,example.com`，不用在每行末尾加 `DIRECT` 或 `REJECT`；由脚本决定出口。编辑 GitHub 文件后等待远程规则更新，或在 Clash Verge 中手动刷新规则集。
+`REJECT.txt` 已包含 **30 条保守广告/追踪拦截规则**，`PROXY.txt` 已包含 `DOMAIN-SUFFIX,rutracker.net`，覆盖 `rutracker.net` 及其子域名，交给现有的「🚀节点选择」Selector。需要新规则时直接往文件添加行，例如 `DOMAIN-SUFFIX,example.com`，不用在每行末尾加 `DIRECT` 或 `REJECT`；由脚本决定出口。编辑 GitHub 文件后等待远程规则更新，或在 Clash Verge 中手动刷新规则集。
 
 为避免旧配置残留，脚本会清理此前注入的 `OPENAI`、`OPENAI_JP`、`GOOGLE_JP` 及 Google / YouTube 动态规则集引用，并删除这些旧版专用 Provider。此操作只清理本脚本此前添加的专用分流，不改动订阅中的其他规则，也不改动 `DIRECT.txt`、`PROXY.txt` 和 `REJECT.txt`。
 
