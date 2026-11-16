@@ -53,21 +53,12 @@ function main(config) {
     config.rules = [];
   }
 
-  // 清除本脚本旧版注入的规则，避免 OpenAI / Google 日本分流残留。
-  const managedNames = [
-    "REJECT", "DIRECT", "PROXY", "OPENAI", "OPENAI_JP",
-    "GOOGLE_JP", "GOOGLE_JP_SITE", "GOOGLE_JP_YOUTUBE"
-  ];
+  // 清除本脚本注入的规则，避免重复添加。
+  const managedNames = ["REJECT", "DIRECT", "PROXY"];
   config.rules = config.rules.filter(rule => {
     if (typeof rule !== "string") return true;
     return !managedNames.some(name => rule.startsWith("RULE-SET," + name + ","));
   });
-
-  // 删除旧版脚本注册的专用 Provider；不影响订阅中的其他规则。
-  [
-    "OPENAI", "OPENAI_JP", "GOOGLE_JP",
-    "GOOGLE_JP_SITE", "GOOGLE_JP_YOUTUBE"
-  ].forEach(name => delete config["rule-providers"][name]);
 
   const groups = Array.isArray(config["proxy-groups"]) ? config["proxy-groups"] : [];
   const manual = groups.find(g => g.name === "🚀节点选择" && g.type === "select")
@@ -75,7 +66,7 @@ function main(config) {
     || groups.find(g => g.type === "select"
       && typeof g.name === "string" && g.name.includes("节点选择"));
 
-  // 恢复普通自定义规则：DIRECT、PROXY、REJECT，不再强制 OpenAI / Google 走日本。
+  // 添加自定义直连、代理和拦截规则。
   addDirect(config);
 
   if (manual) {
