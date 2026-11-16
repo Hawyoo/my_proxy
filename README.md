@@ -1,6 +1,6 @@
 # 自定义 Clash 代理规则
 
-个人维护的 Clash Verge Rev / Mihomo 规则集：`DIRECT` / `REJECT` / `PROXY`。OpenAI 与 Google 不再被强制指定日本节点，按当前订阅原有规则处理。
+个人维护的 Clash Verge Rev / Mihomo 规则集：`DIRECT` / `REJECT` / `PROXY`。
 
 > **一句话用法**：把下方**完整 JavaScript** 复制到 Clash Verge 的「全局扩展脚本」，保存、应用订阅，再切换到「规则（Rule）」模式。**不要**将这些 JavaScript 粘贴到 YAML 配置或普通规则编辑器中。
 
@@ -10,8 +10,8 @@
 2. **删除以前粘贴的旧版 `addDirect`、`addReject`、`main` 等整段代码**，全部替换成下一节这段脚本。不要同时保留两个 `main(config)`，也不要再叠加以前单独的同类规则。
 3. 保存脚本并**启用**它，然后刷新 / 重新应用订阅。如果提示脚本错误，先检查是否完整复制，包括最后一个 `}`。
 4. 将 Clash Verge 的模式切到 **规则（Rule）**。不要使用全局（Global）模式来检验按域名分流。
-5. 进入「代理」确认现有组名为 **🚀节点选择**（`Selector`）；代码支持以包含「节点选择」的名称查找。脚本不再要求日本 URLTest 组。
-6. 打开 ChatGPT 和 Google，再到 **连接（Connections）** 查看请求命中的策略组。OpenAI 与 Google 不再由本脚本强制走日本节点，而是按订阅原有规则处理；只有命中你自行维护的 `DIRECT.txt`、`PROXY.txt` 或 `REJECT.txt` 域名时，才应用对应自定义规则。
+5. 进入「代理」，确认存在 **🚀节点选择** 手动选择组，并在该组中选择要使用的节点。`Selector` 表示手动选择组类型，对应配置中的 `type: select`，不是需要追加到组名里的文字。脚本优先查找完整组名 `🚀节点选择`，其次查找 `节点选择`，最后查找名称包含「节点选择」的手动选择组。
+6. 打开 `rutracker.net`，到 **连接（Connections）** 查看是否命中 `RULE-SET,PROXY`，并使用「🚀节点选择」组。
 
 > 扩展脚本本身**不会随 GitHub 自动更新**：当 `scripts/rules-loader.js` 发生变化，需要重新复制到 Clash Verge。域名规则文件则由 Mihomo 按 `interval: 86400`（24 小时）自动检查更新。
 
@@ -75,21 +75,12 @@ function main(config) {
     config.rules = [];
   }
 
-  // 清除本脚本旧版注入的规则，避免 OpenAI / Google 日本分流残留。
-  const managedNames = [
-    "REJECT", "DIRECT", "PROXY", "OPENAI", "OPENAI_JP",
-    "GOOGLE_JP", "GOOGLE_JP_SITE", "GOOGLE_JP_YOUTUBE"
-  ];
+  // 清除本脚本注入的规则，避免重复添加。
+  const managedNames = ["REJECT", "DIRECT", "PROXY"];
   config.rules = config.rules.filter(rule => {
     if (typeof rule !== "string") return true;
     return !managedNames.some(name => rule.startsWith("RULE-SET," + name + ","));
   });
-
-  // 删除旧版脚本注册的专用 Provider；不影响订阅中的其他规则。
-  [
-    "OPENAI", "OPENAI_JP", "GOOGLE_JP",
-    "GOOGLE_JP_SITE", "GOOGLE_JP_YOUTUBE"
-  ].forEach(name => delete config["rule-providers"][name]);
 
   const groups = Array.isArray(config["proxy-groups"]) ? config["proxy-groups"] : [];
   const manual = groups.find(g => g.name === "🚀节点选择" && g.type === "select")
@@ -97,7 +88,7 @@ function main(config) {
     || groups.find(g => g.type === "select"
       && typeof g.name === "string" && g.name.includes("节点选择"));
 
-  // 恢复普通自定义规则：DIRECT、PROXY、REJECT，不再强制 OpenAI / Google 走日本。
+  // 添加自定义直连、代理和拦截规则。
   addDirect(config);
 
   if (manual) {
@@ -113,6 +104,20 @@ function main(config) {
 
 ## 3. 规则文件和优先级
 
+### 代理组名称在哪里指定？
+
+`PROXY.txt` 是域名规则清单，每行只写匹配条件，例如：
+
+```text
+DOMAIN-SUFFIX,rutracker.net
+```
+
+脚本找到现有的 `🚀节点选择` 组后，会生成 `RULE-SET,PROXY,🚀节点选择`，这条配置才指定代理组名称。因此，规则文件每行末尾不需要再写组名。以 `#` 开头的行只是说明注释，不参与匹配。
+
+若你的组名带空格，例如 `🚀 节点选择`，脚本也能通过「节点选择」文字找到它，并使用实际完整组名。若没有找到符合条件的手动选择组，脚本会提示，自定义 PROXY 规则不会启用。
+
+### 匹配顺序
+
 规则从上往下依次匹配，**最先匹配的规则生效**。由于代码使用 `unshift()` 插入规则，`main()` 按**从低到高**的优先级调用函数。
 
 | 优先级 | 文件 / 规则集 | 出口 | 说明 |
@@ -123,8 +128,6 @@ function main(config) {
 | 4 | 订阅原有规则 | 原有出口 | 未命中自定义规则时，按订阅规则处理 |
 
 `REJECT.txt` 已包含 **30 条保守广告/追踪拦截规则**，`PROXY.txt` 已包含 `DOMAIN-SUFFIX,rutracker.net`，覆盖 `rutracker.net` 及其子域名，交给现有的「🚀节点选择」Selector。需要新规则时直接往文件添加行，例如 `DOMAIN-SUFFIX,example.com`，不用在每行末尾加 `DIRECT` 或 `REJECT`；由脚本决定出口。编辑 GitHub 文件后等待远程规则更新，或在 Clash Verge 中手动刷新规则集。
-
-为避免旧配置残留，脚本会清理此前注入的 `OPENAI`、`OPENAI_JP`、`GOOGLE_JP` 及 Google / YouTube 动态规则集引用，并删除这些旧版专用 Provider。此操作只清理本脚本此前添加的专用分流，不改动订阅中的其他规则，也不改动 `DIRECT.txt`、`PROXY.txt` 和 `REJECT.txt`。
 
 ### REJECT 广告与追踪域名说明
 
@@ -159,8 +162,6 @@ DOMAIN,wiley.grapeshot.co.uk
 
 ## 5. 常见问题
 
-**OpenAI 和 Google 还会自动走日本节点吗？** 不会。本脚本已移除 OpenAI / Google 日本专属规则，不会再强制指定日本出口。它们按当前订阅原有规则处理；如果你自行将相关域名加入 `DIRECT.txt`、`PROXY.txt` 或 `REJECT.txt`，则按对应自定义规则处理。
-
 **自定义 PROXY 规则走哪个节点？** 命中 `PROXY.txt` 的流量交给现有的「🚀节点选择」Selector，由你当前选择的节点组决定出口；本脚本不会替你指定国家或地区。
 
 **规则优先级如何判断？** Mihomo 从上往下匹配，先命中的规则生效。本脚本注入顺序为 `REJECT > PROXY > DIRECT > 原订阅规则`。因此同一域名同时出现在多个自定义规则文件时，优先级更高的规则生效。
@@ -171,8 +172,8 @@ DOMAIN,wiley.grapeshot.co.uk
 
 ## 6. 命名约定
 
-当前仓库维护的规范规则文件为 `rules/DIRECT.txt`、`rules/PROXY.txt` 和 `rules/REJECT.txt`。OpenAI / Google 日本专属规则文件已从当前配置中移除，不再由脚本加载。
+当前仓库维护的规范规则文件为 `rules/DIRECT.txt`、`rules/PROXY.txt` 和 `rules/REJECT.txt`。
 
 项目的旧根目录 `academic.txt` / `other.txt` 内容已合并在 `rules/DIRECT.txt`；旧的 `rules/REJECT` / `rules/PROXY` 已统一更名为 `.txt`。请只维护表中列出的规范文件，避免旧路径残留。
 
-参考：[Mihomo 规则文档](https://wiki.metacubex.one/config/rules/) · [OpenAI 网络连接建议](https://help.openai.com/en/articles/9247338-network-recommendations-for-chatgpt-errors-on-web-and-apps)。
+参考：[Mihomo 规则文档](https://wiki.metacubex.one/config/rules/)。
