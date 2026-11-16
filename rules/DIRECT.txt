@@ -283,6 +283,13 @@ DOMAIN-SUFFIX,alibaba.cdn.steampipe.steamcontent.com
 DOMAIN-SUFFIX,steam302.xyz
 
 # =========================
+# Group: BitComet / CometID
+# =========================
+# BitComet 服务与 CometID 账号登录（含子域名）
+DOMAIN-SUFFIX,bitcomet.com
+DOMAIN-SUFFIX,playcomet.com
+
+# =========================
 # Group: Miscellaneous
 # =========================
 DOMAIN-SUFFIX,cn.bing.com
