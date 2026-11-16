@@ -66,7 +66,6 @@ function main(config) {
     || groups.find(g => g.type === "select"
       && typeof g.name === "string" && g.name.includes("节点选择"));
 
-  // 添加自定义直连、代理和拦截规则。
   addDirect(config);
 
   if (manual) {
