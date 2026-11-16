@@ -7,7 +7,7 @@
 ## 1. 安装与更新
 
 1. 打开 **Clash Verge Rev → 订阅（Profiles）**，找到 **全局扩展脚本（Global Script / JavaScript）**；界面路径随软件版本可能略有不同。如果你一直使用的是某个订阅自己的 JavaScript 扩展，也可以在那里使用本脚本。
-2. **删除以前粘贴的旧版 `addDirect`、`addReject`、`main` 等整段代码**，全部替换成下一节这段脚本。不要同时保留两个 `main(config)`，也不要再叠加以前单独的同类规则。
+2. 将下一节的完整脚本粘贴到 JavaScript 扩展编辑器中，替换编辑器中的全部内容。
 3. 保存脚本并**启用**它，然后刷新 / 重新应用订阅。如果提示脚本错误，先检查是否完整复制，包括最后一个 `}`。
 4. 将 Clash Verge 的模式切到 **规则（Rule）**。不要使用全局（Global）模式来检验按域名分流。
 5. 进入「代理」，确认存在 **🚀节点选择** 手动选择组，并在该组中选择要使用的节点。`Selector` 表示手动选择组类型，对应配置中的 `type: select`，不是需要追加到组名里的文字。脚本优先查找完整组名 `🚀节点选择`，其次查找 `节点选择`，最后查找名称包含「节点选择」的手动选择组。
@@ -88,7 +88,6 @@ function main(config) {
     || groups.find(g => g.type === "select"
       && typeof g.name === "string" && g.name.includes("节点选择"));
 
-  // 添加自定义直连、代理和拦截规则。
   addDirect(config);
 
   if (manual) {
@@ -162,18 +161,14 @@ DOMAIN,wiley.grapeshot.co.uk
 
 ## 5. 常见问题
 
-**自定义 PROXY 规则走哪个节点？** 命中 `PROXY.txt` 的流量交给现有的「🚀节点选择」Selector，由你当前选择的节点组决定出口；本脚本不会替你指定国家或地区。
+**自定义 PROXY 规则走哪个节点？** 命中 `PROXY.txt` 的流量交给现有的「🚀节点选择」Selector，使用你在该组中选择的节点。
 
 **规则优先级如何判断？** Mihomo 从上往下匹配，先命中的规则生效。本脚本注入顺序为 `REJECT > PROXY > DIRECT > 原订阅规则`。因此同一域名同时出现在多个自定义规则文件时，优先级更高的规则生效。
 
 **自定义规则是否覆盖所有流量？** 不会。它只处理明确列入规则文件、且已被 Mihomo 接管的域名。未命中的流量继续按订阅原有规则处理。
 
-**我之前在 FlClash 遇到 SSL 证书异常，这些规则能修好吗？** 不一定。DNS / TLS 中间人拦截或 Android VPN 兼容性问题仍可能发生，不能通过关闭 App 的证书安全校验来解决。
-
 ## 6. 命名约定
 
 当前仓库维护的规范规则文件为 `rules/DIRECT.txt`、`rules/PROXY.txt` 和 `rules/REJECT.txt`。
-
-项目的旧根目录 `academic.txt` / `other.txt` 内容已合并在 `rules/DIRECT.txt`；旧的 `rules/REJECT` / `rules/PROXY` 已统一更名为 `.txt`。请只维护表中列出的规范文件，避免旧路径残留。
 
 参考：[Mihomo 规则文档](https://wiki.metacubex.one/config/rules/)。
