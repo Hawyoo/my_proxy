@@ -1,3 +1,6 @@
 # PROXY 自定义规则列表：一行一条，不要写最后的策略组名称。
 # 命中后使用现有的 🚀节点选择 Selector。
+# RuTracker：主站域名及其子域名
 DOMAIN-SUFFIX,rutracker.net
+# RuTracker 静态资源主机：仅匹配此主机
+DOMAIN,static.rutracker.cc
