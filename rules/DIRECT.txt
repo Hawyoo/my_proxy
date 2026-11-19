@@ -290,6 +290,11 @@ DOMAIN-SUFFIX,bitcomet.com
 DOMAIN-SUFFIX,playcomet.com
 
 # =========================
+# Group: PT sites
+# =========================
+DOMAIN-SUFFIX,nanyangpt.com
+
+# =========================
 # Group: Miscellaneous
 # =========================
 DOMAIN-SUFFIX,cn.bing.com
